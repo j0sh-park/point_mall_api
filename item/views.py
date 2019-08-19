@@ -5,8 +5,8 @@ from django.db import transaction
 from rest_condition import Or, And
 
 from .permissions import IsPurchase, IsSafeMethod
-from .models import Item, UserItem, Category
-from .serializers import ItemSerializer, UserItemSerializer, CategorySerializer
+from .models import Item, UserItem, Category, History, HistoryItem
+from .serializers import ItemSerializer, UserItemSerializer, CategorySerializer, HistorySerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -33,6 +33,10 @@ class ItemViewSet(viewsets.ModelViewSet):
         user_item.count += 1
         user_item.save()
 
+        history = History(user=request.user)
+        history.save()
+        HistoryItem(history=history, item=item, count=1).save()
+
         serializer = UserItemSerializer(user.items.all(), many=True)
         return Response(serializer.data)
 
@@ -43,6 +47,8 @@ class ItemViewSet(viewsets.ModelViewSet):
         items = request.data['items']
 
         sid = transaction.savepoint()
+        history = History(user=request.user)
+        history.save()
         for i in items:
             item = Item.objects.get(id=i['item_id'])
             count = int(i['count'])
@@ -58,6 +64,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                 user_item = UserItem(user=user, item=item)
             user_item.count += count
             user_item.save()
+            HistoryItem(history=history, item=item, count=count).save()
         transaction.savepoint_commit(sid)
         serializer = UserItemSerializer(user.items.all(), many=True)
         return Response(serializer.data)
@@ -72,3 +79,8 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         category = self.get_object()
         serializer = ItemSerializer(category.items.all(), many=True, context=self.get_serializer_context())
         return Response(serializer.data)
+
+
+class HistoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = History.objects.all()
+    serializer_class = HistorySerializer
