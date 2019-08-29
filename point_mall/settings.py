@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'point_mall',
         'USER': 'root',
         'PASSWORD': 'rootpassword',
-        'HOST': 'point-mall.cudaihahhjga.ap-northeast-2.rds.amazonaws.com',
+        'HOST': 'pointmall.cudaihahhjga.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306'
     }
 }
@@ -140,12 +140,8 @@ OAUTH2_PROVIDER = {
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
 }
 
-AWS_ACCESS_KEY_ID = ''
-AWS_SECRET_ACCESS_KEY = ''
-AWS_SESSION_TOKEN = ''
-
-AWS_STORAGE_BUCKET_NAME = 'cdn.pointmall.abc'
-AWS_S3_CUSTOM_DOMAIN = 'd1hw73111spa9z.cloudfront.net'
+AWS_STORAGE_BUCKET_NAME = 'cdn.pointmall.abc1'
+AWS_S3_CUSTOM_DOMAIN = 'd1cqs3iw3uy9yy.cloudfront.net'
 AWS_S3_URL = 'https://%s/' % AWS_S3_CUSTOM_DOMAIN
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
@@ -155,4 +151,4 @@ STATICFILES_STORAGE = 'point_mall.storages.StaticStorage'
 
 AWS_LOCATION = 'assets/'
 ASSET_URL = '%s%s' % (AWS_S3_URL, AWS_LOCATION)
-DEFAULT_FILE_STORAGE = 'point_mall.storages.FileStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
